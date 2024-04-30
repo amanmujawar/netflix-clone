@@ -12,16 +12,23 @@ const App = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => { // Include the user parameter here
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         console.log("Logged In");
-        navigate('/');
+        // Skip redirection if the user is already logged in
+        if (window.location.pathname === '/login') {
+          navigate('/');
+        }
       } else {
         console.log("Logged Out");
         navigate('/login');
       }
-    })
-  }, [navigate]); // Include navigate in the dependency array
+    });
+  
+    // Clean up the subscription when the component unmounts
+    return unsubscribe;
+  }, [navigate]);
+  
 
   return (
     <div>
